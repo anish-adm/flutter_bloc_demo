@@ -1,0 +1,1 @@
+String baseUrl = "jsonplaceholder.typicode.com";
