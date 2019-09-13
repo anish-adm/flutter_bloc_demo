@@ -48,15 +48,24 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  UserListBloc _userListBloc = UserListBloc();
-  ToDosListBloc _toDosListBloc = ToDosListBloc();
+  UserListBloc _userListBloc;
+  ToDosListBloc _toDosListBloc;
+
+
+  _MyHomePageState(){
+    _userListBloc = UserListBloc();
+    _toDosListBloc = ToDosListBloc(userListBloc: _userListBloc);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
         actions: <Widget>[
-          IconButton(icon: Icon(Icons.refresh), onPressed: () {})
+          IconButton(icon: Icon(Icons.refresh), onPressed: () {
+            _userListBloc.dispatch(SelectUser(null));
+          })
         ],
       ),
       body: Container(

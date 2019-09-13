@@ -3,25 +3,17 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bloc_demo/blocs/users/list/index.dart';
 import 'package:flutter_bloc_demo/model/User.dart';
 
-class UserSelectionDropdown extends StatefulWidget {
+class UserSelectionDropdown extends StatelessWidget {
   final UserListBloc userListBloc;
 
   UserSelectionDropdown(this.userListBloc);
-
-  @override
-  _UserSelectionDropdownState createState() => _UserSelectionDropdownState();
-}
-
-class _UserSelectionDropdownState extends State<UserSelectionDropdown> {
-
-  int selectedUser;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.only(bottom: 8.0,left: 16.0, right: 16.0, top: 8.0),
       child: BlocBuilder<UserListBloc, UsersListState>(
-        bloc: widget.userListBloc,
+        bloc: this.userListBloc,
         builder: (context, state) {
           if (state is UsersListLoading) {
             return Center(child: Padding(
@@ -35,36 +27,22 @@ class _UserSelectionDropdownState extends State<UserSelectionDropdown> {
               ),
             ));
           } else if (state is UsersListRefreshed) {
-            selectedUser = state.selectedUserId;
-            return Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Text(
-                  'Select User: ',
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold, color: Colors.grey),
-                ),
-                Container(
-                  constraints: BoxConstraints(maxWidth: 250),
-                  child: DropdownButton<int>(
-                    value: selectedUser,
-                    isExpanded: true,
-                    onChanged: (int newValue) {
-                      widget.userListBloc.dispatch(SelectUser(newValue));
-                      setState(() {
-                        selectedUser = newValue;
-                      });
-                    },
-                    items: state.usersList.map<DropdownMenuItem<int>>((User user) {
-                      return DropdownMenuItem<int>(
-                        value: user.id,
-                        child: Text(user.name+" (${user.username})", maxLines: 3 , overflow: TextOverflow.clip,),
-                      );
-                    }).toList(),
-                  ),
-                ),
-
-              ],
+            return Container(
+//              constraints: BoxConstraints(maxWidth: 250),
+              child: DropdownButton<int>(
+                hint: Text('Select User'),
+                value: state.selectedUserId,
+                isExpanded: true,
+                onChanged: (int newValue) {
+                  this.userListBloc.dispatch(SelectUser(newValue));
+                },
+                items: state.usersList.map<DropdownMenuItem<int>>((User user) {
+                  return DropdownMenuItem<int>(
+                    value: user.id,
+                    child: Text(user.name+" (${user.username})", maxLines: 3 , overflow: TextOverflow.clip,),
+                  );
+                }).toList(),
+              ),
             );
           } else {
             return Center(child: Text((state as UsersListCouldNotLoad).message));

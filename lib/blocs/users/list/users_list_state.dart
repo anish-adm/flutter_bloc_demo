@@ -1,30 +1,34 @@
 import 'package:flutter_bloc_demo/model/User.dart';
 
-abstract class UsersListState{}
+abstract class UsersListState {}
 
-class UsersListLoading extends UsersListState{
-
+class UsersListLoading extends UsersListState {
   @override
   String toString() {
     return 'UsersListState: UsersListLoading{}';
   }
 }
 
-class UsersListRefreshed extends UsersListState{
+class UsersListRefreshed extends UsersListState {
   final List<User> usersList;
   final int selectedUserId;
-  UsersListRefreshed(this.usersList,{this.selectedUserId});
+
+  UsersListRefreshed(this.usersList, {this.selectedUserId});
+
+  UsersListRefreshed copyWith({List<User> usersList, int selectedUserId}) {
+    return UsersListRefreshed(usersList ?? this.usersList,
+        selectedUserId: selectedUserId);
+  }
 
   @override
   String toString() {
-    return 'UsersListState: UsersListRefreshed{count: ${usersList.length}';
+    return 'UsersListState: UsersListRefreshed{count: ${usersList.length}, selectedUserId: $selectedUserId}';
   }
-
-  //Implement copy with functionality
 }
 
-class UsersListCouldNotLoad extends UsersListState{
+class UsersListCouldNotLoad extends UsersListState {
   final String message;
+
   UsersListCouldNotLoad(this.message);
 
   @override

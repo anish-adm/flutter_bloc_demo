@@ -39,7 +39,7 @@ class ToDoList extends StatelessWidget {
               ),
             );
           } else {
-            Center(child: Text((state as ToDosListCouldNotLoad).message));
+            return Center(child: Text((state as ToDosListCouldNotLoad).message));
           }
         },
       ),

@@ -14,13 +14,20 @@ class UserListBloc extends Bloc<UsersListEvent, UsersListState> {
       try{
         UsersListResult usersListResult = await UserRepository().getUsers();
         if(usersListResult.ok){
-          yield UsersListRefreshed(usersListResult.users, selectedUserId: 3);
+          yield UsersListRefreshed(usersListResult.users);
         }else{
           yield UsersListCouldNotLoad(usersListResult.message);
         }
       }catch(exception){
         yield UsersListCouldNotLoad(exception.toString());
         print(exception);
+      }
+    }else if(event is SelectUser){
+      try{
+        UsersListRefreshed tempCurrentState = currentState as UsersListRefreshed;
+        yield (tempCurrentState.copyWith(usersList: tempCurrentState.usersList, selectedUserId: event.userId));
+      }catch(exception){
+        yield currentState;
       }
     }
   }

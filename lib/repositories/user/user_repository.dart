@@ -6,7 +6,6 @@ class UserRepository{
   Future<UsersListResult> getUsers() async {
     try{
       HttpResponse httpResponse = await HttpClient.instance.get("users");
-      print(httpResponse);
       if(httpResponse.ok){
         return UsersListResult.fromList(httpResponse.data);
       }else{
