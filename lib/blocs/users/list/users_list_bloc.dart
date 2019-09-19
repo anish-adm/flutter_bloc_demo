@@ -20,7 +20,6 @@ class UserListBloc extends Bloc<UsersListEvent, UsersListState> {
         }
       }catch(exception){
         yield UsersListCouldNotLoad(exception.toString());
-        print(exception);
       }
     }else if(event is SelectUser){
       try{

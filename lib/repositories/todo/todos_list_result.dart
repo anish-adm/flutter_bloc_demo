@@ -15,7 +15,6 @@ class ToDosListResult{
       });
       return ToDosListResult(tempToDos, null, true);
     }catch(exception){
-      print(exception);
       return ToDosListResult(null, exception.toString(), false);
     }
   }

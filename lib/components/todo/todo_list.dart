@@ -32,6 +32,7 @@ class _ToDoListState extends State<ToDoList> {
         builder: (context, state) {
           if (state is ToDosListRefreshed) {
             return ListView.builder(
+              controller: _scrollController,
               itemBuilder: (BuildContext context, int index) {
                 return index >= state.toDosList.length
                     ? BottomLoader()
@@ -58,7 +59,6 @@ class _ToDoListState extends State<ToDoList> {
   }
 
   void _onScroll() {
-    print('_onScroll');
     final maxScroll = _scrollController.position.maxScrollExtent;
     final currentScroll = _scrollController.position.pixels;
     if (maxScroll - currentScroll <= _scrollThreshold) {
@@ -98,7 +98,6 @@ class ToDoListItem extends StatelessWidget {
       leading: Checkbox(
         value: _todo.completed,
         onChanged: (bool newValue) {
-          print(newValue);
           ToDoDetailBloc _toDoDetailBloc =
               ToDoDetailBloc(toDosListBloc: _toDosListBloc);
           Todo tempToDo = _todo;

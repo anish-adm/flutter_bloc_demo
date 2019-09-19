@@ -18,11 +18,8 @@ class ToDosListBloc extends Bloc<ToDosListEvent, ToDosListState> {
 
   ToDosListBloc({this.userListBloc}) {
     userBlocSubscription = this.userListBloc?.state?.listen((newState) {
-      print('state change listener called');
-      print(newState.runtimeType.toString());
       if (newState is UsersListRefreshed) {
         UsersListRefreshed usersListRefreshedState = newState;
-        print(usersListRefreshedState);
         if (usersListRefreshedState.selectedUserId != userId) {
           this.dispatch(ResetAndFetchToDos(
               userId: usersListRefreshedState.selectedUserId));
@@ -46,8 +43,7 @@ class ToDosListBloc extends Bloc<ToDosListEvent, ToDosListState> {
       try {
         _page++;
         ToDosListResult toDosListResult = await ToDoRepository()
-            .getToDos(_page, _limit, userId: event.userId);
-        userId = event.userId;
+            .getToDos(_page, _limit, userId: userId);
         if (toDosListResult.ok) {
           if(currentState is ToDosListLoading){
             if(toDosListResult.toDos.isNotEmpty){
@@ -73,7 +69,6 @@ class ToDosListBloc extends Bloc<ToDosListEvent, ToDosListState> {
         }
       } catch (exception) {
         yield ToDosListCouldNotLoad(exception.toString());
-        print(exception);
       }
     }
     if (event is ResetAndFetchToDos) {
@@ -91,7 +86,6 @@ class ToDosListBloc extends Bloc<ToDosListEvent, ToDosListState> {
         }
       } catch (exception) {
         yield ToDosListCouldNotLoad(exception.toString());
-        print(exception);
       }
     }
     if(event is RefreshToDos){

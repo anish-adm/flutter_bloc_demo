@@ -15,7 +15,6 @@ class UsersListResult{
       });
       return UsersListResult(tempUsers, null, true);
     }catch(exception){
-      print(exception);
       return UsersListResult(null, exception.toString(), false);
     }
   }

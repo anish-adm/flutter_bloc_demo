@@ -20,22 +20,17 @@ class ToDoDetailBloc extends Bloc<ToDoDetailEvent, ToDoDetailState> {
       yield ToDoDetailRefreshed(event.todo);
     } else if (event is Update) {
       yield ToDoDetailRefreshed(event.todo);
-      print(toDosListBloc?.state.runtimeType.toString());
       try {
         //      if(toDosListBloc?.state is ToDosListRefreshed){
-        print('inside if');
         List<Todo> tempToDoList =
             (toDosListBloc?.currentState as ToDosListRefreshed).toDosList;
         int index = tempToDoList.indexWhere((todo) {
           return todo.id == event.todo.id;
         });
-        print("index is: $index");
         tempToDoList[index] = event.todo;
         toDosListBloc?.dispatch(RefreshToDos(tempToDoList));
-        print("RefreshToDos is done");
         //      }
       } catch (exception) {
-        print(exception);
       }
     }
   }

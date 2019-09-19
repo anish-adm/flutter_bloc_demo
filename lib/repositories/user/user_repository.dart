@@ -12,7 +12,6 @@ class UserRepository{
         return UsersListResult([],httpResponse.message,false);
       }
     }catch(exception){
-      print(exception);
       return UsersListResult([],"Could not load users, Please try after some time",false);
     }
   }

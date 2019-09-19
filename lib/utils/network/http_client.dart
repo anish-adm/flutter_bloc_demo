@@ -42,17 +42,12 @@ class HttpClient {
         uri = endpoint as Uri;
       }
 
-      print(uri.toString());
-
       /// API call with GET method
       Response response = await _client.get(uri, headers: headers);
-      print(response.body);
-      print(response.statusCode);
       _logResponse(response);
       /// We got the response to the server, Create response based on server reply
       return _createResponse(response);
     } catch (exception) {
-      print("At http exception");
       if (_enableDebugging) print(exception);
       // ToDo: Write Log
       /// Something went wrong, create negative response
@@ -121,7 +116,6 @@ class HttpClient {
         return HttpResponse(false, HttpResponseProblem.UNDEFINED);
       }
     }catch(exception){
-      print(exception);
       return HttpResponse(false, HttpResponseProblem.UNDEFINED);
     }
 
@@ -133,7 +127,7 @@ class HttpClient {
       print("Header: ${response.request.headers}");
       print("Body: ${requestBody}");
       print("*******Response:*******");
-      print("Statuus Code: ${response.statusCode}");
+      print("Status Code: ${response.statusCode}");
       print("Body: ${response.body}");
       print("Header: ${response.headers}");
     }

@@ -13,14 +13,12 @@ class ToDoRepository{
         queryParameters['userId'] = userId.toString();
       }
       HttpResponse httpResponse = await HttpClient.instance.get("todos", queryParameters: queryParameters);
-      print(httpResponse);
       if(httpResponse.ok){
         return ToDosListResult.fromList(httpResponse.data);
       }else{
         return ToDosListResult([],httpResponse.message,false);
       }
     }catch(exception){
-      print(exception);
       return ToDosListResult([],"Could not load todos, Please try after some time",false);
     }
   }
