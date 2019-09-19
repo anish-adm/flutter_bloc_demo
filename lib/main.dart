@@ -94,6 +94,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void dispose() {
     _userListBloc.dispose();
+    _toDosListBloc.dispose();
     super.dispose();
   }
 }

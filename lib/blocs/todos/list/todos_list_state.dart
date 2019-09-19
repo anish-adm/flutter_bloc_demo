@@ -11,16 +11,18 @@ class ToDosListLoading extends ToDosListState {
 
 class ToDosListRefreshed extends ToDosListState {
   final List<Todo> toDosList;
+  final bool hasReachedMax;
 
-  ToDosListRefreshed(this.toDosList);
+  ToDosListRefreshed(this.toDosList, {this.hasReachedMax});
 
-  ToDosListRefreshed copyWith(List<Todo> tempToDosList) {
-    return ToDosListRefreshed(tempToDosList ?? toDosList);
+  ToDosListRefreshed copyWith(List<Todo> tempToDosList, {bool hasReachedMax}) {
+    return ToDosListRefreshed(tempToDosList ?? toDosList,
+        hasReachedMax: hasReachedMax ?? this.hasReachedMax);
   }
 
   @override
   String toString() {
-    return 'ToDosListState: ToDosListRefreshed{count: ${toDosList.length}';
+    return 'ToDosListState: ToDosListRefreshed{count: ${toDosList.length}, hasReachedMax: $hasReachedMax}';
   }
 }
 
@@ -31,6 +33,6 @@ class ToDosListCouldNotLoad extends ToDosListState {
 
   @override
   String toString() {
-    return 'ToDosListState: ToDosListCouldNotLoad{message: $message';
+    return 'ToDosListState: ToDosListCouldNotLoad{message: $message}';
   }
 }

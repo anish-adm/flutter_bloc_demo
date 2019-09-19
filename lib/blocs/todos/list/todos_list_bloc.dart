@@ -10,9 +10,9 @@ import 'package:flutter_bloc_demo/blocs/users/list/users_list_state.dart';
 import 'package:flutter_bloc_demo/model/Todo.dart';
 
 class ToDosListBloc extends Bloc<ToDosListEvent, ToDosListState> {
-  int _page = 1;
+  int _page = 0;
   int _limit = 15;
-  UserListBloc userListBloc;
+  final UserListBloc userListBloc;
   int userId;
   StreamSubscription userBlocSubscription;
 
@@ -42,16 +42,32 @@ class ToDosListBloc extends Bloc<ToDosListEvent, ToDosListState> {
 
   @override
   Stream<ToDosListState> mapEventToState(ToDosListEvent event) async* {
-    if (event is FetchToDos) {
+    if (event is FetchToDos && !_hasReachedMax(currentState)) {
       try {
+        _page++;
         ToDosListResult toDosListResult = await ToDoRepository()
             .getToDos(_page, _limit, userId: event.userId);
-//        List<Todo> oldToDosList = [];
-//        if(currentState is ToDosListRefreshed){
-//          oldToDosList = (currentState as ToDosListRefreshed).toDosList;
-//        }
+        userId = event.userId;
         if (toDosListResult.ok) {
-          yield ToDosListRefreshed(toDosListResult.toDos);
+          if(currentState is ToDosListLoading){
+            if(toDosListResult.toDos.isNotEmpty){
+              yield ToDosListRefreshed(toDosListResult.toDos, hasReachedMax: false);
+              return;
+            }else{
+              yield ToDosListCouldNotLoad("List is empty!");
+              return;
+            }
+          }else if(currentState is ToDosListRefreshed){
+            List<Todo> existingList = (currentState as ToDosListRefreshed).toDosList;
+            if(toDosListResult.toDos.isNotEmpty){
+              existingList = existingList+toDosListResult.toDos;
+              yield ToDosListRefreshed(existingList, hasReachedMax: false);
+              return;
+            }else{
+              yield (currentState as ToDosListRefreshed).copyWith(existingList, hasReachedMax: true);
+              return;
+            }
+          }
         } else {
           yield ToDosListCouldNotLoad(toDosListResult.message);
         }
@@ -63,12 +79,13 @@ class ToDosListBloc extends Bloc<ToDosListEvent, ToDosListState> {
     if (event is ResetAndFetchToDos) {
       try {
         yield ToDosListLoading();
-        _page = 1;
+        _page = 0;
         _limit = 15;
         ToDosListResult toDosListResult = await ToDoRepository()
             .getToDos(_page, _limit, userId: event.userId);
         if (toDosListResult.ok) {
-          yield ToDosListRefreshed(toDosListResult.toDos);
+          userId = event.userId;
+          yield ToDosListRefreshed(toDosListResult.toDos, hasReachedMax: false);
         } else {
           yield ToDosListCouldNotLoad(toDosListResult.message);
         }
@@ -77,7 +94,18 @@ class ToDosListBloc extends Bloc<ToDosListEvent, ToDosListState> {
         print(exception);
       }
     }
+    if(event is RefreshToDos){
+      if(event.toDos != null){
+        if(currentState is ToDosListRefreshed)
+          yield (currentState as ToDosListRefreshed).copyWith(event.toDos);
+        else
+          yield ToDosListRefreshed(event.toDos);
+      }
+    }
   }
+
+  bool _hasReachedMax(ToDosListState state) =>
+      state is ToDosListRefreshed && state.hasReachedMax;
 
   @override
   void onTransition(Transition<ToDosListEvent, ToDosListState> transition) {
